@@ -1,0 +1,100 @@
+variable "cidr_block" {
+    type        = string
+    default     = "10.0.0.0/16"
+    description = "CIDR_block VPC."
+  }
+  variable "subnet_vpc" {
+    type    = string
+    default = "10.0.0.0/24"
+  }
+  variable "private_vpc" {
+    type    =  string
+    default  = "10.0.1.0/24"
+  }
+variable "key_pair" {
+    type    = string
+    default = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCqhMPG4m27AaNtOEWfWQ9HYcErgKeVRqOX8OzajIYksyUDiJr3KQ5fgnh7Aj03LBpthsIt/4J3lJwYimNg18AcRkQfYWyCmJ9zwjE7TgXjjxkLDeJhL0utPclK0Hp3cnCReH25fqTH1fSDsxmr4qsJILcWvHj6Vu9WnE7m8ahQA0EYgpzO5Fuq53bRXQpv7lkhjt0DiG6YBHB+rjtbKSC760h076fATkKmyLP3PrFydKHXfoRzUzKa7SgSkbw2a4L2WhtW5KAf3uj8sSPthL7KmGN+qBEgCzwwFkqb2+knyBYZTFbAjUGUdf1jWJKWj7LVXN2DX7jpgdW+Z+/K9thuw6W7HDSzMGRxlqoIvmziqJ3kvOY97ahxR7rESeOPZRVgiIGsVPvij7eDbKjEr5Yhwxw7Nhq7aYEWyx7sYNRdz08V0v+yG4XfLW/4wrGcJFvjGPVSZ2VzRIn7ud9oixLrtTfVU6d8dpraoIxze+h9IVV2ZOJjPhvfY/5h5hB7heM= lenovo@DESKTOP-NO71RQF"
+  }
+  variable "vpc_enabled" {
+    type        = bool
+    default     = true
+    description = "Flag to control the vpc creation."
+  }
+ variable "private_vpc" {
+    type    =  string
+    default  = "10.0.2.0/24"
+  }
+  
+  variable "os_name" {
+  default     = "ami-0ea18256de20ecdfc"
+  description = "A tenancy option for instances launched into the VPC."
+}
+variable "route_table" {
+    type    = string
+    default   =  "0.0.0.0/0"
+  }
+  variable "enable_dns_hostnames" {
+    type        = bool
+    default     = true
+    description = "A boolean flag to enable/disable DNS hostnames in the VPC."
+  }
+  variable "enable_dns_support" {
+    type        = bool
+    default     = true
+    description = "A boolean flag to enable/disable DNS support in the VPC."
+  }
+
+  variable "enable_classiclink" {
+    type        = bool
+    default     = false
+    description = "A boolean flag to enable/disable ClassicLink for the VPC."
+  }
+variable "enable_classiclink_dns_support" {
+    type        = bool
+    default     = false
+    description = "A boolean flag to enable/disable ClassicLink DNS Support for the VPC."
+  }
+  variable "ipv4_ipam_pool_id" {
+    type        = string
+    default     = "80"
+    description = "The ID of an IPv4 IPAM pool you want to use for allocating this VPC's CIDR."
+
+  }
+
+  variable "ipv4_netmask_length" {
+    type        = string
+    default     = null
+    description = "The netmask length of the IPv4 CIDR you want to allocate to this VPC. Requires specifying a ipv4_ipam_pool_id"
+  }
+variable "dhcp_options_domain_name" {
+    type        = string
+    default     = "service.consul"
+    description = "Specifies DNS name for DHCP options set (requires enable_dhcp_options set to true)"
+  }
+
+  variable "dhcp_options_domain_name_servers" {
+    type        = list(string)
+    default     =  ["10.0.0.2"]
+    description = "Specify a list of DNS server addresses for DHCP options set, default to AWS provided (requires enable_dhcp_options set to true)"
+  }
+
+  variable "dhcp_options_ntp_servers" {
+    type        = list(string)
+    default     =  ["127.0.0.1"]
+    description = "Specify a list of NTP servers for DHCP options set (requires enable_dhcp_options set to true)"
+  }
+  variable "dhcp_options_netbios_name_servers" {
+    type        = list(string)
+    default     =  ["127.0.0.1"]
+    description = "Specify a list of netbios servers for DHCP options set (requires enable_dhcp_options set to true)"
+  }
+variable "dhcp_options_netbios_node_type" {
+    type        = string
+    default     = "2"
+    description = "Specify netbios node_type for DHCP options set (requires enable_dhcp_options set to true)"
+  }
+variable "instance_type" {
+  type        = string
+  default     = "t2.micro"
+  description = "A tenancy option for instances launched into the VPC."
+}

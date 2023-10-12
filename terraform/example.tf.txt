@@ -1,0 +1,21 @@
+provider "aws" {
+  region = "ap-northeast-2"
+}
+
+
+module "vpc" {
+  source = "../"
+
+  name        = "mynewvpc"
+  environment = "example"
+  label_order = ["mynewvpc", "environment"]
+
+  vpc_enabled                               = true
+  cidr_block                                = "10.0.0.0/16"
+  enable_flow_log                           = false
+  additional_cidr_block                     = ["172.0.0/16", "172.0.0/16"]
+  enable_dhcp_options                       = false
+  dhcp_options_domain_name                  = "service.consul"
+  dhcp_options_domain_name_servers          = ["127.0.0.1", "10.0.0.2"]
+  enabled_ipv6_egress_only_internet_gateway = false
+}

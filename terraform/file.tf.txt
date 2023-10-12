@@ -1,0 +1,102 @@
+provider "aws" {
+  region     = "ap-northeast-2"
+  access_key = "AKIAXL52S7FKHX4XM4F4"
+  secret_key = "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"
+}
+resource "aws_vpc" "mynewvpc" {
+  cidr_block           = var.cidr_block
+  enable_dns_hostnames = var.enable_dns_hostnames
+  enable_dns_support   = var.enable_dns_support
+}
+resource "aws_instance" "ec2_example" {
+  ami           = var.os_name
+  instance_type = var.instance_type
+  key_name   = "new-key"
+  subnet_id  = aws_subnet.privateS1.id
+  tags = {
+    Name = "terraformEC2"
+  }
+}
+resource "aws_key_pair" "deployer" {
+  key_name   = "new-key"
+  public_key = var.key_pair
+}
+resource "aws_eip" "lb" {
+  instance = aws_instance.ec2_example.id
+  domain   = "vpc"
+}
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.mynewvpc.id
+  tags   = {
+    Name = "IGW"
+  }
+}
+  resource "aws_security_group" "terraform_security" {
+    name        = "terraform_security"
+    description = "Allow TLS inbound traffic"
+    vpc_id      = aws_vpc.mynewvpc.id
+  ingress {
+    description      = "TLS from VPC"
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = [aws_vpc.mynewvpc.cidr_block]
+  }
+egress {
+    from_port        = 0
+    to_port          = 0
+    protocol         = "tcp"
+    cidr_blocks      = ["10.0.0.0/16"]
+  }
+
+  tags = {
+    Name = "terraform_security"
+  }
+}
+  resource "aws_vpc_dhcp_options" "vpc_dhcp" {
+
+    domain_name          = var.dhcp_options_domain_name
+    domain_name_servers  = var.dhcp_options_domain_name_servers
+    ntp_servers          = var.dhcp_options_ntp_servers
+    netbios_name_servers = var.dhcp_options_netbios_name_servers
+    netbios_node_type    = var.dhcp_options_netbios_node_type
+  }
+resource "aws_vpc_dhcp_options_association" "this" {
+
+  vpc_id          =  aws_vpc.mynewvpc.id
+  dhcp_options_id =  aws_vpc_dhcp_options.vpc_dhcp.id
+}
+resource "aws_route_table" "publicRT" {
+  vpc_id = aws_vpc.mynewvpc.id
+ route {
+    cidr_block = var.route_table
+    gateway_id = aws_internet_gateway.igw.id
+  }
+}
+resource "aws_subnet" "publicSubnet" {
+  vpc_id = aws_vpc.mynewvpc.id
+  cidr_block = var.subnet_vpc
+tags = {
+    Name = "publics1"
+  }
+}
+
+resource "aws_subnet" "privateS1" {
+  vpc_id = aws_vpc.mynewvpc.id
+  cidr_block = var.private_vpc
+  tags = {
+    Name = "private1"
+  }
+}
+resource "aws_nat_gateway" "newgateway" {
+  connectivity_type = "private"
+ subnet_id         = aws_subnet.privateS1.id
+}
+
+resource "aws_egress_only_internet_gateway" "newinternat" {
+
+  vpc_id = aws_vpc.mynewvpc.id
+  tags   = {
+    name = "newinternat"
+  }
+}
